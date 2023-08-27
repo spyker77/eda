@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  failed_order_handler:
+    build:
+      context: ./microservices/failed_order_handler
+    restart: unless-stopped
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    depends_on:
+      - rabbitmq
+    deploy:
+      replicas: 1
+
+  order_generation:
+    build:
+      context: ./microservices/order_generation
+    restart: unless-stopped
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      - rabbitmq
+    expose:
+      - "8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order_generation.rule=Host(`localhost`)"
+      - "traefik.http.routers.order_generation.entrypoints=web"
+    deploy:
+      replicas: 3
+
+  order_processing:
+    build:
+      context: ./microservices/order_processing
+    restart: unless-stopped
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    depends_on:
+      - rabbitmq
+    deploy:
+      replicas: 3
+
+  payment_processing:
+    build:
+      context: ./microservices/payment_processing
+    restart: unless-stopped
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    depends_on:
+      - rabbitmq
+    deploy:
+      replicas: 2
+
+  shipment_management:
+    build:
+      context: ./microservices/shipment_management
+    restart: unless-stopped
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    depends_on:
+      - rabbitmq
+    deploy:
+      replicas: 1
+  

@@ -1,0 +1,31 @@
+[tool.black]
+line-length = 119
+
+[tool.isort]
+line_length = 119
+profile = "black"
+
+[tool.flake8]
+max-line-length = 119
+max-complexity = 10
+extend-ignore = ["E203", "W605"]
+
+[tool.poetry]
+name = "failed order handler"
+version = "0.1.0"
+description = "Failed Order Handler"
+authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aio-pika = "^9.2.2"
+
+[tool.poetry.dev-dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+flake8-pyproject = "^1.2.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

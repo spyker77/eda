@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "8080:8080"
+    command:
+      - --providers.docker
+      - --api.insecure=false
+      - --entrypoints.web.address=:80
+      - --providers.docker.exposedByDefault=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  rabbitmq:
+    build:
+      context: ./infra/rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "15692:15692"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/config:/etc/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: grafana/grafana:10.1.0
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+  
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.9.1
+    restart: unless-stopped
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./infra/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.9.1
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.9.1
+    user: root
+    volumes:
+      - ./infra/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - elasticsearch
+      - logstash
+  
+volumes:
+  rabbitmq-data:
+  grafana-data:
+  es-data:

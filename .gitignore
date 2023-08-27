@@ -1,0 +1,11 @@
+__pycache__
+*.log
+*.pot
+*.pyc
+.vscode
+.DS_Store
+.coverage
+.pytest_cache
+.mypy_cache
+.ruff_cache
+htmlcov
