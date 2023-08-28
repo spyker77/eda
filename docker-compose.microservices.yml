@@ -22,6 +22,9 @@ services:
       - "8000"
     labels:
       - "traefik.enable=true"
+      - "traefik.http.middlewares.ratelimiter.ratelimit.burst=200"
+      - "traefik.http.middlewares.ratelimiter.ratelimit.average=1000"
+      - "traefik.http.routers.order_generation.middlewares=ratelimiter"
       - "traefik.http.routers.order_generation.rule=Host(`localhost`)"
       - "traefik.http.routers.order_generation.entrypoints=web"
     deploy:
