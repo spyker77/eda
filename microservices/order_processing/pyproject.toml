@@ -11,9 +11,9 @@ max-complexity = 10
 extend-ignore = ["E203", "W605"]
 
 [tool.poetry]
-name = "order processor"
+name = "order_processing"
 version = "0.1.0"
-description = "Order Processor"
+description = "Order Processing"
 authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
 
 [tool.poetry.dependencies]

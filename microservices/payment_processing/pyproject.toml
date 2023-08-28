@@ -11,9 +11,9 @@ max-complexity = 10
 extend-ignore = ["E203", "W605"]
 
 [tool.poetry]
-name = "payment service"
+name = "payment_processing"
 version = "0.1.0"
-description = "Payment Service"
+description = "Payment Processing"
 authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
 
 [tool.poetry.dependencies]

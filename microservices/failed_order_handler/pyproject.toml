@@ -11,7 +11,7 @@ max-complexity = 10
 extend-ignore = ["E203", "W605"]
 
 [tool.poetry]
-name = "failed order handler"
+name = "failed_order_handler"
 version = "0.1.0"
 description = "Failed Order Handler"
 authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]

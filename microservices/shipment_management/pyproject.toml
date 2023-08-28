@@ -11,9 +11,9 @@ max-complexity = 10
 extend-ignore = ["E203", "W605"]
 
 [tool.poetry]
-name = "shipping service"
+name = "shipment_management"
 version = "0.1.0"
-description = "Shipping Service"
+description = "Shipment Management"
 authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
 
 [tool.poetry.dependencies]
