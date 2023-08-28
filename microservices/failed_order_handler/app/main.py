@@ -3,8 +3,7 @@ import json
 import logging
 
 import aio_pika
-
-CONNECTION_STRING = "amqp://guest:guest@rabbitmq/"
+from rabbitmq_pool import channel_pool
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,16 +21,14 @@ async def handle_dead_letter(message: aio_pika.IncomingMessage):
 
 
 async def main():
-    connection = await aio_pika.connect_robust(CONNECTION_STRING)
-    async with connection:
-        channel = await connection.channel()
+    async with channel_pool:
+        async with channel_pool.acquire() as channel:
+            dead_letter_queue = await channel.declare_queue(
+                "dead_letter_queue", durable=True
+            )
 
-        dead_letter_queue = await channel.declare_queue(
-            "dead_letter_queue", durable=True
-        )
-
-        async for message in dead_letter_queue:
-            await handle_dead_letter(message)
+            async for message in dead_letter_queue:
+                asyncio.create_task(handle_dead_letter(message))
 
 
 if __name__ == "__main__":
