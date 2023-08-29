@@ -69,4 +69,16 @@ services:
       - rabbitmq
     deploy:
       replicas: 1
+
+  notification:
+    build:
+      context: ./microservices/notification
+    restart: unless-stopped
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    environment:
+      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+    depends_on:
+      - rabbitmq
+    deploy:
+      replicas: 1
   

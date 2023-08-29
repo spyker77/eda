@@ -13,16 +13,12 @@ async def handle_shipping(message: aio_pika.IncomingMessage):
     order_data = json.loads(message.body.decode())
 
     try:
-        logger.info(
-            f"Packing order {order_data['order_id']} for {order_data['customer_name']}"
-        )
+        logger.info(f"Packing order {order_data['order_id']} for {order_data['customer_name']}")
 
         # Simulate a delay for packing.
         await asyncio.sleep(2)
 
-        logger.info(
-            f"Order {order_data['order_id']} dispatched to {order_data['address']}"
-        )
+        logger.info(f"Order {order_data['order_id']} dispatched to {order_data['address']}")
 
         # Acknowledge the message after shipping.
         await message.ack()
