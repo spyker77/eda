@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.post("/create_order/")
 async def place_order(order: Order) -> dict[str, str]:
-    order_data = order.dict()
+    order_data = order.model_dump()
     try:
         async with channel_pool.acquire() as channel:
             await channel.default_exchange.publish(
