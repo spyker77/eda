@@ -10,7 +10,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY pyproject.toml .
+COPY pyproject.toml poetry.lock ./
 RUN pip install --upgrade pip --no-cache-dir && \
     export PATH="/root/.local/bin:$PATH" && \
     poetry config virtualenvs.create false && \
