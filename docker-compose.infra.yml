@@ -85,8 +85,16 @@ services:
     depends_on:
       - elasticsearch
       - logstash
+
+  redis:
+    image: redis:7.2.0
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
   
 volumes:
   rabbitmq-data:
   grafana-data:
   es-data:
+  redis-data:

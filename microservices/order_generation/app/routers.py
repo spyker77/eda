@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 
 import aio_pika
 from fastapi import APIRouter, HTTPException
@@ -21,6 +22,7 @@ async def place_order(order: Order) -> dict[str, str]:
                 aio_pika.Message(
                     body=json.dumps(order_data).encode(),
                     delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
+                    message_id=str(uuid.uuid4()),
                 ),
                 routing_key="orders_queue",
             )

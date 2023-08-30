@@ -4,26 +4,42 @@ import logging
 
 import aio_pika
 from rabbitmq_pool import channel_pool
+from redis_pool import get_redis_pool
+
+# Get a unique identifier for this consumer instance.
+CONSUMER_ID = "shipment_management"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 async def handle_shipping(message: aio_pika.IncomingMessage):
-    order_data = json.loads(message.body.decode())
+    async with get_redis_pool() as redis:
+        # Construct a unique key for this consumer.
+        unique_key = f"{CONSUMER_ID}-{message.message_id}"
 
-    try:
-        logger.info(f"Packing order {order_data['order_id']} for {order_data['customer_name']}")
+        # Check for duplicate messages using Redis.
+        if await redis.exists(unique_key):
+            logger.warning(f"Duplicate message detected with ID: {unique_key}")
+            return
 
-        # Simulate a delay for packing.
-        await asyncio.sleep(2)
+        order_data = json.loads(message.body.decode())
 
-        logger.info(f"Order {order_data['order_id']} dispatched to {order_data['address']}")
+        try:
+            logger.info(f"Packing order {order_data['order_id']} for {order_data['customer_name']}")
 
-        # Acknowledge the message after shipping.
-        await message.ack()
-    except Exception as e:
-        logger.error(f"Error shipping order {order_data['order_id']}: {e}")
+            # Simulate a delay for packing.
+            await asyncio.sleep(2)
+
+            logger.info(f"Order {order_data['order_id']} dispatched to {order_data['address']}")
+
+            # Store unique key in Redis with a TTL 1 hour to avoid processing the same message multiple times.
+            await redis.setex(unique_key, 3600, "processed")
+
+            # Acknowledge the message after shipping.
+            await message.ack()
+        except Exception as e:
+            logger.error(f"Error shipping order {order_data['order_id']}: {e}")
 
 
 async def main():
