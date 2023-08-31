@@ -49,12 +49,7 @@ async def send_notification(message: aio_pika.IncomingMessage, channel: aio_pika
 async def main():
     async with channel_pool:
         async with channel_pool.acquire() as channel:
-            processed_exchange = await channel.declare_exchange(
-                "order_processed_exchange", aio_pika.ExchangeType.FANOUT
-            )
-            queue = await channel.declare_queue("notification_queue", durable=True)
-            await queue.bind(processed_exchange)
-
+            queue = await channel.get_queue("notification_queue")
             async for message in queue:
                 asyncio.create_task(send_notification(message, channel))
 

@@ -41,8 +41,7 @@ async def handle_dead_letter(message: aio_pika.IncomingMessage):
 async def main():
     async with channel_pool:
         async with channel_pool.acquire() as channel:
-            dead_letter_queue = await channel.declare_queue("dead_letter_queue", durable=True)
-
+            dead_letter_queue = await channel.get_queue("dead_letter_queue")
             async for message in dead_letter_queue:
                 asyncio.create_task(handle_dead_letter(message))
 

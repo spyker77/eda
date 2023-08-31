@@ -32,9 +32,7 @@ async def process_order(message: aio_pika.IncomingMessage, channel: aio_pika.Cha
             )
 
             # Once order is successfully processed, broadcast it to the fanout exchange.
-            processed_exchange = await channel.declare_exchange(
-                "order_processed_exchange", aio_pika.ExchangeType.FANOUT
-            )
+            processed_exchange = await channel.get_exchange("order_processed_exchange")
             await processed_exchange.publish(
                 aio_pika.Message(
                     body=json.dumps(
@@ -66,16 +64,7 @@ async def process_order(message: aio_pika.IncomingMessage, channel: aio_pika.Cha
 async def main():
     async with channel_pool:
         async with channel_pool.acquire() as channel:
-            dead_letter_exchange = await channel.declare_exchange("dead_letter", aio_pika.ExchangeType.DIRECT)
-            dead_letter_queue = await channel.declare_queue("dead_letter_queue", durable=True)
-            await dead_letter_queue.bind(dead_letter_exchange, "rejected")
-
-            arguments = {
-                "x-dead-letter-exchange": "dead_letter",
-                "x-dead-letter-routing-key": "rejected",
-            }
-
-            queue = await channel.declare_queue("orders_queue", durable=True, arguments=arguments)
+            queue = await channel.get_queue("orders_queue")
             async for message in queue:
                 logger.info(f"Received message: {message.body.decode()}")
                 asyncio.create_task(process_order(message, channel))

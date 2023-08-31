@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 import aio_pika
@@ -16,7 +15,5 @@ async def get_channel() -> aio_pika.Channel:
         return await connection.channel()
 
 
-loop = asyncio.get_event_loop()
-
-connection_pool = Pool(get_connection, max_size=2, loop=loop)
-channel_pool = Pool(get_channel, max_size=10, loop=loop)
+connection_pool = Pool(get_connection, max_size=2)
+channel_pool = Pool(get_channel, max_size=10)

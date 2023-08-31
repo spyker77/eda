@@ -45,8 +45,7 @@ async def handle_shipping(message: aio_pika.IncomingMessage):
 async def main():
     async with channel_pool:
         async with channel_pool.acquire() as channel:
-            queue = await channel.declare_queue("shipping_queue", durable=True)
-
+            queue = await channel.get_queue("shipping_queue")
             async for message in queue:
                 asyncio.create_task(handle_shipping(message))
 

@@ -73,34 +73,13 @@ async def process_payment(message: aio_pika.IncomingMessage, channel: aio_pika.C
             # Acknowledge the message after processing payment.
             await message.ack()
         except Exception as e:
-            # Payment failed, send event for failed payment.
-            await channel.default_exchange.publish(
-                aio_pika.Message(
-                    body=json.dumps(
-                        {
-                            "order_id": payment_data["order_id"],
-                            "status": "failed",
-                            "reason": str(e),
-                        }
-                    ).encode(),
-                    delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
-                    message_id=str(uuid.uuid4()),
-                ),
-                routing_key="payment_failed_queue",
-            )
-
             logger.error(f"Error processing payment for order {payment_data['order_id']}: {e}")
 
 
 async def main():
     async with channel_pool:
         async with channel_pool.acquire() as channel:
-            processed_exchange = await channel.declare_exchange(
-                "order_processed_exchange", aio_pika.ExchangeType.FANOUT
-            )
-            queue = await channel.declare_queue("payment_queue", durable=True)
-            await queue.bind(processed_exchange)
-
+            queue = await channel.get_queue("payment_queue")
             async for message in queue:
                 asyncio.create_task(process_payment(message, channel))
 

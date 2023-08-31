@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
     environment:
-      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+      RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
     depends_on:
       - rabbitmq
@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
     command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
     environment:
-      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+      RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
     depends_on:
       - rabbitmq
     expose:
@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
     command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
     environment:
-      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+      RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
     depends_on:
       - rabbitmq
@@ -54,7 +54,7 @@ services:
     restart: unless-stopped
     command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
     environment:
-      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+      RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
     depends_on:
       - rabbitmq
@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
     command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
     environment:
-      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+      RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
     depends_on:
       - rabbitmq
@@ -80,7 +80,7 @@ services:
     restart: unless-stopped
     command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
     environment:
-      RABBITMQ_URL: "amqp://guest:guest@rabbitmq/"
+      RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
     depends_on:
       - rabbitmq
