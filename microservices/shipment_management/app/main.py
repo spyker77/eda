@@ -40,6 +40,7 @@ async def handle_shipping(message: aio_pika.IncomingMessage):
             await message.ack()
         except Exception as e:
             logger.error(f"Error shipping order {order_data['order_id']}: {e}")
+            await message.reject(requeue=False)
 
 
 async def main():

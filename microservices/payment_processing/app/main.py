@@ -74,6 +74,7 @@ async def process_payment(message: aio_pika.IncomingMessage, channel: aio_pika.C
             await message.ack()
         except Exception as e:
             logger.error(f"Error processing payment for order {payment_data['order_id']}: {e}")
+            await message.reject(requeue=False)
 
 
 async def main():

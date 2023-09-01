@@ -59,6 +59,7 @@ async def process_order(message: aio_pika.IncomingMessage, channel: aio_pika.Cha
             # If there's any exception in order processing, we don't acknowledge the message,
             # so it can be sent to the dead letter queue.
             logger.error(f"Error processing order {order_data['order_id']}: {e}")
+            await message.reject(requeue=False)
 
 
 async def main():
