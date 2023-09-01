@@ -51,7 +51,7 @@ Incorporate a service mesh solution like Istio or Linkerd. A service mesh provid
 
 ### 4. Separate Databases
 
-Each service should ideally have its own dedicated instance of message broker, cashing system and database. This ensures that a single instance failure or compromise does not affect all services. It also helps in scaling and managing backups for individual services efficiently.
+Each service should ideally have its own dedicated database. This ensures that a single database failure or compromise does not affect all services. It also helps in scaling and managing backups for individual services efficiently.
 
 ### 5. Database Encryption
 
