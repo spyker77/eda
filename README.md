@@ -24,7 +24,7 @@ docker compose -f docker-compose.infra.yml -f docker-compose.microservices.yml u
 
 3. Access the Services:
 
-- API Docs: Navigate to <http://localhost/docs>.
+- API Docs: Navigate to <http://localhost/docs> for the OpenAPI 3 documentation.
 - Kibana: Access at <http://localhost:5601>. Remember to create a data view with an index pattern like **logstash-***.
 - Grafana: Available at <http://localhost:3000>. To see the RabbitMQ dashboard, set the data source to Prometheus using the server URL <http://prometheus:9090>.
 

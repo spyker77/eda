@@ -5,7 +5,7 @@ services:
     build:
       context: ./microservices/failed_order_handler
     restart: unless-stopped
-    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "-m", "app.main"]
     environment:
       RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"

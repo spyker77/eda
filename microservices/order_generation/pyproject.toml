@@ -18,10 +18,11 @@ authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.101.1"
-uvicorn = { extras = ["standard"], version = "^0.23.2" }
+quart = "^0.18.4"
+quart-schema = "^0.17.1"
+pydantic = "^2.3.0"
 aio-pika = "^9.2.2"
-
+hypercorn = "^0.14.4"
 
 [tool.poetry.dev-dependencies]
 black = "^23.7.0"

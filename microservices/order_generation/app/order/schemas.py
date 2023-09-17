@@ -7,3 +7,8 @@ class Order(BaseModel):
     address: str
     item: str
     quantity: int
+
+
+class CreateOrderResponse(BaseModel):
+    status: str
+    message: str
