@@ -1,6 +1,6 @@
 FROM python:3.11-slim-buster
 
-WORKDIR /app
+WORKDIR /code
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
@@ -17,11 +17,9 @@ RUN pip install --upgrade pip --no-cache-dir && \
     poetry install --without dev
 
 COPY wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
-
-RUN useradd -m app
+RUN chmod +x /wait-for-it.sh && useradd -m app
 USER app
 
-COPY ./app /app
+COPY . .
 
-CMD [ "python", "main.py" ]
+CMD [ "python", "-m", "app.main" ]

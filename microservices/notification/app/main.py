@@ -3,8 +3,9 @@ import json
 import logging
 
 import aio_pika
-from rabbitmq_pool import channel_pool
-from redis_pool import get_redis_pool
+
+from .rabbitmq_pool import channel_pool
+from .redis_pool import get_redis_pool
 
 # Get a unique identifier for this consumer instance.
 CONSUMER_ID = "notification"

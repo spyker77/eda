@@ -18,9 +18,13 @@ services:
     build:
       context: ./microservices/order_generation
     restart: unless-stopped
-    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "hypercorn", "app.main:app", "--bind", "0.0.0.0:8000"]
     environment:
       RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
+      DEBUG: True
+      TESTING: False
+      API_TITLE: "Event-driven Architecture Simulator"
+      API_VERSION: "v1"
     depends_on:
       - rabbitmq
     expose:
@@ -39,7 +43,7 @@ services:
     build:
       context: ./microservices/order_processing
     restart: unless-stopped
-    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "-m", "app.main"]
     environment:
       RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
@@ -52,7 +56,7 @@ services:
     build:
       context: ./microservices/payment_processing
     restart: unless-stopped
-    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "-m", "app.main"]
     environment:
       RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
@@ -65,7 +69,7 @@ services:
     build:
       context: ./microservices/shipment_management
     restart: unless-stopped
-    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "-m", "app.main"]
     environment:
       RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
@@ -78,7 +82,7 @@ services:
     build:
       context: ./microservices/notification
     restart: unless-stopped
-    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "main.py"]
+    command: ["/wait-for-it.sh", "-t", "60", "rabbitmq:5672", "--", "python", "-m", "app.main"]
     environment:
       RABBITMQ_URL: "amqp://admin:admin@rabbitmq/"
       REDIS_URL: "redis://redis:6379"
@@ -86,4 +90,3 @@ services:
       - rabbitmq
     deploy:
       replicas: 1
-  
