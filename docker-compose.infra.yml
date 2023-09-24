@@ -46,7 +46,7 @@ services:
       - prometheus
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "discovery.type=single-node"
@@ -57,7 +57,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
   
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.9.1
+    image: docker.elastic.co/logstash/logstash:8.10.2
     restart: unless-stopped
     ports:
       - "5044:5044"
@@ -67,7 +67,7 @@ services:
       - elasticsearch
   
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.9.1
+    image: docker.elastic.co/kibana/kibana:8.10.2
     ports:
       - "5601:5601"
     environment:
@@ -76,7 +76,7 @@ services:
       - elasticsearch
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:8.9.1
+    image: docker.elastic.co/beats/filebeat:8.10.2
     user: root
     volumes:
       - ./infra/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
@@ -87,7 +87,7 @@ services:
       - logstash
 
   redis:
-    image: redis:7.2.0
+    image: redis:7.2.0-alpine
     ports:
       - "6379:6379"
     volumes:
