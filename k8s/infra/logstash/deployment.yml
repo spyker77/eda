@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      terminationGracePeriodSeconds: 60
+      initContainers:
+        - name: wait-for-elasticsearch
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until wget -O- http://elasticsearch:9200; do echo waiting for elasticsearch; sleep 2; done;",
+            ]
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash:8.10.2
+          ports:
+            - containerPort: 5044
+          livenessProbe:
+            tcpSocket:
+              port: 5044
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 5044
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1500m"
+          volumeMounts:
+            - name: logstash-config-vol
+              mountPath: /usr/share/logstash/pipeline/
+      volumes:
+        - name: logstash-config-vol
+          configMap:
+            name: logstash-config

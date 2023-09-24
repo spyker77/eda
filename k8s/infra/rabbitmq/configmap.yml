@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-conf
+data:
+  rabbitmq.conf: |
+    load_definitions = /etc/rabbitmq/definitions.json
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-definitions
+data:
+  definitions.json: |
+    {
+      "rabbit_version": "3.12.4",
+      "users": [
+        {
+          "name": "admin",
+          "password": "admin",
+          "tags": ["administrator"]
+      }
+      ],
+      "vhosts": [
+        {
+          "name": "/"
+        }
+      ],
+      "permissions": [
+        {
+          "user": "admin",
+          "vhost": "/",
+          "configure": ".*",
+          "write": ".*",
+          "read": ".*"
+      }
+      ],
+      "queues": [
+        {
+          "name": "dead_letter_queue",
+          "vhost": "/",
+          "durable": true,
+          "auto_delete": false,
+          "arguments": {}
+        },
+        {
+          "name": "orders_queue",
+          "vhost": "/",
+          "durable": true,
+          "auto_delete": false,
+          "arguments": {
+            "x-dead-letter-exchange": "dead_letter",
+            "x-dead-letter-routing-key": "rejected"
+          }
+        },
+        {
+          "name": "notification_queue",
+          "vhost": "/",
+          "durable": true,
+          "auto_delete": false,
+          "arguments": {
+            "x-dead-letter-exchange": "dead_letter",
+            "x-dead-letter-routing-key": "rejected"
+          }
+        },
+        {
+          "name": "payment_queue",
+          "vhost": "/",
+          "durable": true,
+          "auto_delete": false,
+          "arguments": {
+            "x-dead-letter-exchange": "dead_letter",
+            "x-dead-letter-routing-key": "rejected"
+          }
+        },
+        {
+          "name": "shipping_queue",
+          "vhost": "/",
+          "durable": true,
+          "auto_delete": false,
+          "arguments": {
+            "x-dead-letter-exchange": "dead_letter",
+            "x-dead-letter-routing-key": "rejected"
+          }
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "dead_letter",
+          "vhost": "/",
+          "type": "direct",
+          "durable": true,
+          "auto_delete": false,
+          "internal": false,
+          "arguments": {}
+        },
+        {
+          "name": "order_processed_exchange",
+          "vhost": "/",
+          "type": "fanout",
+          "durable": true,
+          "auto_delete": false,
+          "internal": false,
+          "arguments": {}
+        }
+      ],
+      "bindings": [
+        {
+          "source": "dead_letter",
+          "vhost": "/",
+          "destination": "dead_letter_queue",
+          "destination_type": "queue",
+          "routing_key": "rejected",
+          "arguments": {}
+        },
+        {
+          "source": "order_processed_exchange",
+          "vhost": "/",
+          "destination": "notification_queue",
+          "destination_type": "queue",
+          "routing_key": "",
+          "arguments": {}
+        },
+        {
+          "source": "order_processed_exchange",
+          "vhost": "/",
+          "destination": "payment_queue",
+          "destination_type": "queue",
+          "routing_key": "",
+          "arguments": {}
+        }
+      ]
+    }

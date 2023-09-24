@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processing
+spec:
+  selector:
+    matchLabels:
+      app: order-processing
+  template:
+    metadata:
+      labels:
+        app: order-processing
+    spec:
+      initContainers:
+        - name: init-wait-for-rabbitmq
+          image: spyker77/eda-order_processing:latest
+          command: ["/wait-for-it.sh", "rabbitmq:5672", "--timeout=60"]
+      containers:
+        - name: order-processing
+          image: spyker77/eda-order_processing:latest
+          env:
+            - name: RABBITMQ_URL
+              value: "amqp://admin:admin@rabbitmq/"
+            - name: REDIS_URL
+              value: "redis://redis:6379"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250"

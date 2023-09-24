@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-generation
+spec:
+  selector:
+    matchLabels:
+      app: order-generation
+  template:
+    metadata:
+      labels:
+        app: order-generation
+    spec:
+      initContainers:
+        - name: init-wait-for-rabbitmq
+          image: spyker77/eda-order_generation:latest
+          command: ["/wait-for-it.sh", "rabbitmq:5672", "--timeout=60"]
+      containers:
+        - name: order-generation
+          image: spyker77/eda-order_generation:latest
+          env:
+            - name: RABBITMQ_URL
+              value: "amqp://admin:admin@rabbitmq/"
+            - name: DEBUG
+              value: "True"
+            - name: TESTING
+              value: "False"
+            - name: API_TITLE
+              value: "Event-driven Architecture Simulator"
+            - name: API_VERSION
+              value: "v1"
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250"

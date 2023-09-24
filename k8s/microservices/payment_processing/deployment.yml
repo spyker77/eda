@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipment-management
+spec:
+  selector:
+    matchLabels:
+      app: shipment-management
+  template:
+    metadata:
+      labels:
+        app: shipment-management
+    spec:
+      initContainers:
+        - name: init-wait-for-rabbitmq
+          image: spyker77/eda-payment_processing:latest
+          command: ["/wait-for-it.sh", "rabbitmq:5672", "--timeout=60"]
+      containers:
+        - name: shipment-management
+          image: spyker77/eda-payment_processing:latest
+          env:
+            - name: RABBITMQ_URL
+              value: "amqp://admin:admin@rabbitmq/"
+            - name: REDIS_URL
+              value: "redis://redis:6379"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250"

@@ -1,0 +1,11 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: failed-order-handler
+# spec:
+#   selector:
+#     app: failed-order-handler
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 80

@@ -1,37 +1,83 @@
 # Event-driven Architecture Simulator
 
-This project simulates an event-driven architecture using microservices, message queues, and monitoring solutions. It showcases how various services interact through event-driven patterns, and provides visibility into the system's workings through comprehensive monitoring solutions.
+This project simulates an event-driven architecture using microservices, message queues, and monitoring solutions. It showcases how various services interact through event-driven patterns and provides visibility into the system's workings through comprehensive monitoring solutions.
 
-## Prerequisites
+## 1. Docker Compose Deployment
 
-- Docker & Docker Compose installed.
-- At least 4GB of RAM allocated to Docker (due to multiple services running).
+### Prerequisites
 
-## Setup & Run
+- Docker installed.
 
-1. Clone the Repository:
+### Setup & Run
+
+Clone the Repository:
 
 ```bash
 git clone https://github.com/spyker77/eda.git
 cd eda
 ```
 
-2. Build and Run the Services:
+### Build and Run the Services
 
 ```bash
 docker compose -f docker-compose.infra.yml -f docker-compose.microservices.yml up --build
 ```
 
-3. Access the Services:
+Access the Services:
 
 - API Docs: Navigate to <http://localhost/docs> for the OpenAPI 3 documentation.
 - Kibana: Access at <http://localhost:5601>. Remember to create a data view with an index pattern like **logstash-***.
 - Grafana: Available at <http://localhost:3000>. To see the RabbitMQ dashboard, set the data source to Prometheus using the server URL <http://prometheus:9090>.
 
-## Troubleshooting
+### Troubleshooting
 
 - Ensure all services are running and check Docker logs for any errors.
 - For Redis-related issues, ensure the Redis container has enough memory and isn't reaching its limit.
+
+### Cleanup
+
+```bash
+docker compose down
+```
+
+## 2. Kubernetes Deployment
+
+### Prerequisites
+
+- Kubernetes cluster (like Minikube, kind, or a cloud-based Kubernetes service).
+- kubectl command-line tool installed and configured to communicate with the cluster.
+- Also make sure you've allocated enough resources to avoid an unexpected behavior or errors.
+
+### Setup & Run
+
+### Deploy the Infrastructure and Microservices
+
+```bash
+kubectl apply -f k8s/infra/ -R
+kubectl apply -f k8s/microservices/ -R
+```
+
+### Access the Services
+
+- API Docs: Navigate to <http://localhost:31080/docs>.
+- Kibana: Access at <http://localhost:31004>.
+- Grafana: Available at <http://localhost:31000>.
+- Prometheus: Access at <http://localhost:31005>.
+- RabbitMQ Management: Access at <http://localhost:31001>.
+
+### Troubleshooting
+
+- Ensure all pods are running: kubectl get pods.
+- Check logs for specific pods using kubectl logs <pod-name>.
+- For Redis-related issues, ensure the Redis pod has enough memory and isn't reaching its limit.
+- Check the status and events of a pod using kubectl describe pod <pod-name>.
+
+### Cleanup
+
+```bash
+kubectl delete -f k8s/infra/ -R
+kubectl delete -f k8s/microservices/ -R
+```
 
 ## Production Considerations
 
@@ -41,9 +87,9 @@ Before deploying this simulator in a production environment, consider the follow
 
 For services that expose an API or web interface, ensure that they are served over HTTPS using SSL/TLS certificates. This encrypts the data in transit and helps protect against man-in-the-middle attacks.
 
-### 2. Adopt Kubernetes
+### 2. Adopt Kubernetes in the Cloud
 
-Consider adopting Kubernetes for container orchestration. Kubernetes offers features such as auto-scaling, rolling updates, and a robust ecosystem that can help in managing microservices deployments efficiently.
+Consider adopting a cloud-based Kubernetes service for container orchestration. Services like Amazon's EKS or Google's GKE offer managed Kubernetes environments that can scale easily to meet production demands. They provide features such as auto-scaling, rolling updates, and a robust ecosystem that can help in managing microservices deployments efficiently.
 
 ### 3. Service Mesh
 

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+  namespace: kube-system
+  labels:
+    k8s-app: filebeat
+data:
+  filebeat.yml: |-
+    filebeat.autodiscover:
+     providers:
+       - type: kubernetes
+         node: ${NODE_NAME}
+         hints.enabled: true
+         hints.default_config:
+           type: container
+           paths:
+             - /var/log/containers/*${data.kubernetes.container.id}.log
+
+    processors:
+      - add_cloud_metadata:
+      - add_host_metadata:
+
+    output.logstash:
+      hosts: ['${LOGSTASH_HOST:logstash}:${LOGSTASH_PORT:5044}']
+
+    logging.level: info
+    logging.to_files: false
