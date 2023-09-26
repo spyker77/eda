@@ -1,16 +1,15 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
   name: order-generation
 spec:
-  rules:
-    - host: localhost
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: order-generation
-                port:
-                  number: 8000
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`localhost`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: order-generation
+          port: 8000
+      middlewares:
+        - name: ratelimiter

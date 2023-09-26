@@ -12,13 +12,13 @@ spec:
       labels:
         app: traefik
     spec:
-      serviceAccountName: traefik
+      serviceAccountName: traefik-ingress-controller
       containers:
         - name: traefik
           image: traefik:v3.0
           args:
             - --ping
-            - --providers.kubernetesingress
+            - --providers.kubernetesCRD
             - --api.insecure=false
             - --entrypoints.web.address=:80
           ports:

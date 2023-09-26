@@ -46,6 +46,7 @@ docker compose down
 
 - Kubernetes cluster (like Minikube, kind, or a cloud-based Kubernetes service).
 - kubectl command-line tool installed and configured to communicate with the cluster.
+- Fulfilled requirements for the Traefik: <https://doc.traefik.io/traefik/v3.0/providers/kubernetes-crd/#requirements>.
 - Also make sure you've allocated enough resources to avoid an unexpected behavior or errors.
 
 ### Setup & Run
