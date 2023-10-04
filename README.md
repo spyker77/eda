@@ -37,7 +37,7 @@ Access the Services:
 ### Cleanup
 
 ```bash
-docker compose down
+docker compose -f docker-compose.infra.yml -f docker-compose.microservices.yml down
 ```
 
 ## 2. Kubernetes Deployment
