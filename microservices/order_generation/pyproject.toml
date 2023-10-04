@@ -17,11 +17,11 @@ description = "Order Generation"
 authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-quart = "^0.18.4"
+python = "^3.12"
+quart = "^0.19.2"
 quart-schema = "^0.17.1"
-pydantic = "^2.3.0"
-aio-pika = "^9.2.2"
+pydantic = "^2.4.2"
+aio-pika = "^9.3.0"
 hypercorn = "^0.14.4"
 
 [tool.poetry.dev-dependencies]

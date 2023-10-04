@@ -1,10 +1,10 @@
 # ---- Build Stage ----
-FROM python:3.11-alpine AS build
+FROM python:3.12-alpine AS build
 
 WORKDIR /code
 
 # Install curl, use it to install poetry, then remove curl
-RUN apk --no-cache add curl && \
+RUN apk --no-cache add curl gcc musl-dev && \
     curl -sSL https://install.python-poetry.org | python3 - --version 1.6.1 && \
     apk del curl
 
@@ -18,7 +18,7 @@ RUN pip install --upgrade pip --no-cache-dir && \
     poetry install --without dev
 
 # ---- Final Stage ----
-FROM python:3.11-alpine
+FROM python:3.12-alpine
 
 WORKDIR /code
 
@@ -31,7 +31,7 @@ COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh && adduser -D app
 
 # Copy built python dependencies from build stage
-COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=build /usr/local/bin /usr/local/bin
 
 # Copy the rest of the application

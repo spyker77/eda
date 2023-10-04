@@ -17,7 +17,7 @@ description = "Shipment Management"
 authors = ["Evgeni Sautin <evgeni.sautin@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 aio-pika = "^9.2.2"
 redis = "^5.0.0"
 
